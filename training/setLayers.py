@@ -327,7 +327,8 @@ def writePrototxts(dataFolder, sub_dir, batch_size, layername, kernel, stride, o
 
 
 def getSolverPrototxt(base_lr, folder_name):
-    string = 'net: "pose_train_test.prototxt"\n\
+    return (
+        'net: "pose_train_test.prototxt"\n\
 # test_iter specifies how many forward passes the test should carry out.\n\
 # In the case of MNIST, we have test batch size 100 and 100 test iterations,\n\
 # covering the full 10,000 testing images.\n\
@@ -351,8 +352,9 @@ max_iter: 600000\n\
 snapshot: 2000\n\
 snapshot_prefix: "%s/pose"\n\
 # solver mode: CPU or GPU\n\
-solver_mode: GPU\n' % (base_lr, folder_name)
-    return string
+solver_mode: GPU\n'
+        % (base_lr, folder_name)
+    )
 
 
 def calcAndWriteStat(sub_dir, layername, kernel, stride, outCH, args):
@@ -444,10 +446,10 @@ if __name__ == "__main__":
     args.batch_size = batch_size
 
     # Two branch: weight = 1, scale 0.5~1.1, fix the mode, base_lr = 4e-5, batch_size = 10
-    if(exp == 1):
+    if (exp == 1):
         directory = 'COCO_exp_caffe/pose56/exp22/'
         serverFolder = '/home/zhecao/COCO_kpt/pose56/exp22'
-        base_folder = '/media/posenas4b/User/zhe/arch/'+directory+'model'
+        base_folder = f'/media/posenas4b/User/zhe/arch/{directory}model'
         dataFolder = '/home/zhecao/COCO_kpt/lmdb_trainVal'
         source = '/home/zhecao/COCO_kpt/lmdb_trainVal'
         base_lr = 4e-5   # 2e-5
@@ -463,19 +465,19 @@ if __name__ == "__main__":
             os.makedirs(directory)
         stage = 6
 
-        for nc in range(0,1):
+        for _ in range(0,1):
             layername = ['V','V','P'] * 2  +  ['V'] * 4 + ['P']  +  ['V'] * 2 + ['C'] * 2     + ['$'] + ['C2'] * 3 + ['C2'] * 2    + ['L2'] # first-stage
             kernel =    [ 3,  3,  2 ] * 2  +  [ 3 ] * 4 + [ 2 ]  +  [ 3 ] * 2 + [ 3 ] * 2     + [ 0 ] + [ 3 ] * 3  + [ 1 ] * 2     + [ 0 ] # first-stage
             outCH =     [64]*3 + [128]* 3  +  [256] * 4 + [256]  +  [512] * 2 + [256] + [128] + [ 0 ] + [128] * 3  + [512] +[np*2] + [ 0 ] # first-stage
             stride =    [ 1 , 1,  2 ] * 2  +  [ 1 ] * 4 + [ 2 ]  +  [ 1 ] * 2 + [ 1 ] * 2     + [ 0 ] + [ 1 ] * 3  + [ 1 ] * 2     + [ 0 ] # first-stage
 
             #if stage >= 2:
-            for s in range(2, stage+1):
+            for _ in range(2, stage+1):
                 layername += ['@'] + ['C2'] * 7         +  ['L2']
                 kernel +=    [ 0 ] + [ 7 ] * 5 + [1,1]  +  [ 0 ]
                 outCH +=     [ 0 ] + [128] * 6 + [np*2] +  [ 0 ]
                 stride +=    [ 0 ] + [ 1 ] * 7          +  [ 0 ]
-                   
+
             sub_dir = directory
             d_caffemodel = base_folder
             if not os.path.exists(sub_dir):

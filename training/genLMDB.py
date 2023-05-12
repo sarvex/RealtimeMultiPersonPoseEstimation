@@ -190,7 +190,7 @@ def writeLMDB(datasets, lmdb_path, validation):
 def float2bytes(floats):
 	if type(floats) is float:
 		floats = [floats]
-	return struct.pack('%sf' % len(floats), *floats)
+	return struct.pack(f'{len(floats)}f', *floats)
 
 if __name__ == "__main__":
 	#writeLMDB(['MPI'], '/home/zhecao/MPI_pose/lmdb', 1)

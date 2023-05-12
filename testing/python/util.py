@@ -26,10 +26,8 @@ def showmap(a, fmt='png'):
 
 def getJetColor(v, vmin, vmax):
     c = np.zeros((3))
-    if (v < vmin):
-        v = vmin
-    if (v > vmax):
-        v = vmax
+    v = max(v, vmin)
+    v = min(v, vmax)
     dv = vmax - vmin
     if (v < (vmin + 0.125 * dv)): 
         c[0] = 256 * (0.5 + (v * 4)) #B: 0.5 ~ 1
